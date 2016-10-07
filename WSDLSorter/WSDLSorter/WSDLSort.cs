@@ -41,9 +41,7 @@ namespace WSDLSorter
         {
             var xmlDoc = new XmlDocument();
 
-            //var xmlDeclaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
             var rootNode = xmlDoc.AppendChild(xmlDoc.CreateElement("root"));
-            //xmlDoc.InsertBefore(xmlDeclaration, rootNode);
 
             foreach (var node in _sortedElements)
             {
