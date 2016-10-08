@@ -52,29 +52,35 @@ namespace WSDLSorter
             if (_sortedElements.Count != rootNode.ChildNodes.Count)
                 throw new ArgumentException();
 
-            var xmlAttributeCollections = xmlDoc.SelectNodes("//xs:element", _namespaceManager)?
+            var elementNodes = xmlDoc.SelectNodes("//xs:element", _namespaceManager)?
                 .Cast<XmlNode>()
                 .Where(x => x.Attributes?["type"] != null)
-                .Select(x => x.Attributes)
-                ?? Enumerable.Empty<XmlAttributeCollection>();
+                ?? Enumerable.Empty<XmlNode>();
 
-            foreach (var attributes in xmlAttributeCollections)
+            foreach (var elementNode in elementNodes)
             {
-                var elementType = attributes["type"];
-
-                var regex = new Regex("^q+\\d:");
-                var match = regex.Match(elementType.Value);
-                if (match.Success)
+                if (elementNode.Attributes != null)
                 {
-                    var evilAttributeName = match.Groups[0].Captures[0].Value.Replace(":", string.Empty);
-                    if (!string.IsNullOrEmpty(evilAttributeName))
+                    var typeAttribute = elementNode.Attributes["type"];
+
+                    var regex = new Regex("^q\\d+:");
+                    var match = regex.Match(typeAttribute.Value);
+                    if (match.Success)
                     {
-                        var evilAttribute = attributes["xmlns:" + evilAttributeName];
-                        if (evilAttribute != null)
+                        var evilAttributeName = match.Groups[0].Captures[0].Value.Replace(":", string.Empty);
+                        if (!string.IsNullOrEmpty(evilAttributeName))
                         {
-                            attributes.Remove(evilAttribute);
+                            var evilAttribute = elementNode.Attributes["xmlns:" + evilAttributeName];
+                            if (evilAttribute != null)
+                            {
+                                var newAttribute = xmlDoc.CreateAttribute("r");
+                                newAttribute.Value = evilAttribute.Value;
+                                elementNode.Attributes.Append(newAttribute);
+                                elementNode.Attributes.Remove(evilAttribute);
+                            }
+                            //attributes.Remove(typeAttribute);
+                            typeAttribute.Value = typeAttribute.Value.Replace(typeAttribute.Value, "r");
                         }
-                        attributes.Remove(elementType);
                     }
                 }
             }
