@@ -79,7 +79,7 @@ namespace WSDLSorter
                                 elementNode.Attributes.Remove(evilAttribute);
                             }
                             //attributes.Remove(typeAttribute);
-                            typeAttribute.Value = typeAttribute.Value.Replace(typeAttribute.Value, "r");
+                            typeAttribute.Value = typeAttribute.Value.Replace(evilAttributeName, "r");
                         }
                     }
                 }
