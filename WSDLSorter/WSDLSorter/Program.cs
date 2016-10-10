@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace WSDLSorter
 {
@@ -10,13 +7,18 @@ namespace WSDLSorter
     {
         static void Main(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length != 1)
                 return;
 
-            var wsdlSort = new WsdlSort(args[0]);
+            var wsdlName = args[0];
+
+            var wsdlSort = new WsdlSort(wsdlName);
 
             wsdlSort.LoadXml();
-            wsdlSort.SaveSortedXml(args[1]);
+            wsdlSort.SaveSchema();
+            wsdlSort.SaveMessages();
+            wsdlSort.SaveOperations();
+            wsdlSort.SaveBindings();
         }
     }
 }
